@@ -27,7 +27,15 @@ class DetailsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
-        binding.message.text = arguments?.getString("Message")
+
+
+        if(!arguments?.getString("Message").isNullOrEmpty())
+        {
+            binding.message.text = arguments?.getString("Message")
+        }else
+        {
+            binding.message.text = getString(R.string.no_message)
+        }
     }
 
 }

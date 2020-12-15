@@ -22,20 +22,30 @@ class HomeViewModel : ViewModel() {
     val getTrafficDataList: LiveData<List<TrafficData>>
         get() = _getTrafficDataList
 
+    private val _status = MutableLiveData<Boolean>()
+
+    val status: LiveData<Boolean>
+        get() = _status
+
     init {
         downLoadTrafficData()
     }
 
-    private fun downLoadTrafficData() {
+    fun downLoadTrafficData() {
+        _getTrafficDataList.value = ArrayList()
         uiScope.launch {
             val getTrafficDataListDeferred = TrafficAPI.retrofitService.getTrafficData()
             try {
-                val listresult = getTrafficDataListDeferred.await()
-                _getTrafficDataList.value = listresult
+                val listResult = getTrafficDataListDeferred.await()
+                _getTrafficDataList.value = listResult.sortedByDescending {
+                    it.lastUpdated
+                }
+                _status.value = true
 
             }catch (e: Exception)
             {
                 _getTrafficDataList.value = ArrayList()
+                _status.value = false
             }
         }
     }

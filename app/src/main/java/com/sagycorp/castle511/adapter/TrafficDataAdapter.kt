@@ -50,12 +50,9 @@ class TrafficDataAdapter(private val dataList: List<TrafficData>, private val co
         }
 
         override fun onClick(v: View?) {
-            if (!mTrafficData?.status.equals("DISPLAYING_MESSAGE")) Toast.makeText(v?.context,mTrafficData?.name, Toast.LENGTH_SHORT).show()
-            else{
                 mTrafficData?.let {
                     mContext?.homeToDetailsScreen(v,it)
                 }
-            }
         }
 
     }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Castle 511</string>
+    <string name="refresh">refresh</string>
+    <string name="fetching_data">Fetching data..</string>
+    <string name="fetching_error">Data fetching failed. \n Please check your internet.</string>
+    <string name="no_message">No message for this sign</string>
 </resources>

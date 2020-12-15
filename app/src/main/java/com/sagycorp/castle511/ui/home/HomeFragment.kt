@@ -1,12 +1,10 @@
 package com.sagycorp.castle511.ui.home
 
+import android.opengl.Visibility
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -28,6 +26,8 @@ class HomeFragment : Fragment() {
     ): View? {
 
         binding = HomeFragmentBinding.inflate(inflater, container, false)
+        loadingMessageVisible()
+        setHasOptionsMenu(true)
         return binding.root;
     }
 
@@ -36,16 +36,23 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         viewModel.getTrafficDataList.observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()){
+                loadingMessageVisible()
+            }
+            else loadingMessageDisable()
             it?.let {
-                //adapter.submitList(it)
-                Log.d("HomeFragment",it.size.toString())
                 binding.recyclerView.apply {
                     adapter = TrafficDataAdapter(it, HomeFragment())
                 }
             }
         })
 
-
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if(!it) binding.loadingText.text = getString(R.string.fetching_error)
+                else binding.loadingText.text = getString(R.string.fetching_data);
+            }
+        })
 
     }
 
@@ -65,6 +72,31 @@ class HomeFragment : Fragment() {
                 value.append(page?.lines?.joinToString(" ","\n","\n", -1,"..."))
         }
         return value.toString()
+    }
+
+    private fun loadingMessageVisible(){
+        binding.loadingText.visibility = View.VISIBLE
+    }
+
+    private fun loadingMessageDisable(){
+        binding.loadingText.visibility = View.GONE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.refresh -> {
+                loadingMessageVisible()
+                binding.loadingText.text = getString(R.string.fetching_data);
+                viewModel.downLoadTrafficData()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

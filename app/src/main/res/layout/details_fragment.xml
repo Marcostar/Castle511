@@ -17,6 +17,9 @@
         android:layout_margin="12dp"
         android:gravity="center"
         android:padding="4dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="@string/no_message"
         android:background="@android:color/white"
         android:textColor="@color/black"/>
 
